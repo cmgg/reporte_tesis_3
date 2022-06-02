@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# Except this
+!.gitignore
+!Figuras/*
+!bibliography.bib
+!LICENSE
+!main.tex

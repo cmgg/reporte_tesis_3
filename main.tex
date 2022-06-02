@@ -1,0 +1,195 @@
+\documentclass{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+\usepackage{biblatex}
+\usepackage{graphicx}
+\usepackage{lipsum}
+
+\addbibresource{bibliography.bib}
+\graphicspath{ {./Figuras/} }
+
+\title{Reporte de Tesis 3}
+\author{ 
+Carlos Manuel Gutiérrez Galán \and
+Carlos Soubervielle (Asesor) \and
+Marco Tulio (Comité) \and
+Cesar Guerra (Comité)
+}
+\date{Junio 2022}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        {\huge \bfseries Reporte de tesis III} \\[6.5ex]
+        {\large \bfseries Carlos Gutiérrez} \\
+        \vspace{3ex}
+        {\large Carlos Soubervielle (asesor)} \\
+        \vspace{3ex}
+        {\large Marco Tulio (sinodal técnico)\hspace{1em}Cesar Guerra (sinodal monitor)} \\
+        \vspace{3ex}
+        Julio del 2022 \\
+        \vspace{2ex}
+        {\textit{``Design of a Low-Power Gateway to Connect a Weather Monitoring WSN to the Internet through Wireless Protocols''}}
+    \end{center}
+    \vspace{1ex}
+    \begin{abstract}
+        \lipsum[1-2]
+    \end{abstract}
+\end{titlepage}
+
+\tableofcontents\thispagestyle{empty}\newpage\addtocontents{toc}{\protect\thispagestyle{empty}}\setcounter{page}{1}
+
+\section{Problema a resolver}
+
+\subsection{Resumen}
+\paragraph{}
+Una de las maneras de coordinar y almacenar la información generada por una red de sensores inalámbricos (WSN, por sus siglas en inglés) Zigbee, cuyo propósito es el monitoreo de condiciones meteorológicas, es mediante un módulo\linebreak ``XStick'' y una computadora. El uso de una computadora no solo aumenta\linebreak considerablemente el costo del proyecto si no que también descarta por completo la idea de tener la WSN desconectada de la red eléctrica debido al alto consumo energético. La otra manera es mediante un Gateway propietario de una empresa tercera que usualmente son de caja cerrada y cuyos protocolos inalámbricos son limitados, además de que tienen un costo elevado y se corre el riesgo de que sean descontinuados o se vuelvan obsoletos. El depender de un controlador que es propietario y de diseño cerrado limita mucho la escalabilidad del proyecto, aumenta considerablemente el costo, y restringe la posibilidad de reducir el consumo energético. Esto último tiene impacto cuando la solución requiere tiempos prolongados a la intemperie y se alimenta mediante baterías.
+
+\paragraph{}
+La solución a estos problemas es el desarrollar un Gateway a la medida que pueda reemplazar a dicho controladores, integrando las características relevantes de ellos en un sistema embebido, lo cual nos permitirá reducir costos y consumo de energía, así como también abrirle las puertas a la escalabilidad para que el proyecto pueda ser retomado en un futuro, o bien, pueda ser adaptado para resolver otro tipo de problemas. Este Gateway será desarrollado en una plataforma de desarrollo cuyo núcleo principal es un system on a chip (SoC). El software embebido desarrollado permitirá controlar los diferentes componentes del sistema, así como activarlos y desactivarlos en tiempo real para reducir el\linebreak consumo energético del sistema. La selección de dicha plataforma se llevará a cabo mediante el análisis de requerimientos del problema a resolver, y se considerará la metodología co-design que facilita el desarrollo de sistemas que involucran la integración de hardware y software.
+
+\newpage
+
+\subsection{Explicación}
+\paragraph{}
+Actualmente existe una gran demanda de dispositivos IoT como lo son sensores, actuadores y cámaras, para ser usados en Smart Cities, vehículos autónomos y la denominada ``Industria 4.0''. Un cuello de botella de estos sistemas es la comunicación de datos hacia Internet para su posterior procesamiento en computadoras que poseen más recursos de cómputo, lo cuál es un reto ya que dichos dispositivos IoT se comunican con una diversa cantidad de protocolos de comunicación como lo son Zigbee, Bluetooth, Thread, Ethernet, entre otros, que requieren de un dispositivo que maneje dichos protocolos para la intercomunicación entre ellos y el Internet; Dicho dispositivo se denomina ``Gateway''.
+
+\paragraph{}
+Para este proyecto se cuenta con una WSN que permite monitorear diferentes parámetros meteorológicos. Esta WSN está compuesta por diversos nodos ``End~Device'' (nodos~ED) que monitorean las condiciones meteorológicas con sus diversos sensores, para luego comunicar esta información a nodos ``Router'' (nodos~R) y estos a su vez se comunican con un nodo controlador (nodo~C), el cual manda los datos de la red hacia el internet. La implementación actual de la red utiliza una laptop y un XStick para fungir como controlador, lo cuál no es lo óptimo y definitivamente no es la opción indicada para una versión final del proyecto debido a las siguientes restricciones:
+
+\subparagraph{Consumo energético}
+El alto consumo energético de una computadora (de escritorio, laptop, servidor, Raspberry Pi, etc) limita el dominio de ubicaciones en las que la WSN puede operar a aquellas que disponen de la red eléctrica, lo cuál no es deseable cuando se busca monitorear condiciones ambientales (por ejemplo en un bosque, un monte, un desierto, etc). Para superar esta limitación se requiere de un sistema con la menor cantidad de hardware que permita la comunicación de los nodos al Internet, y el único software que se ejecute en el sea el que controla la red cuando sea necesario.
+
+\subparagraph{Escalabilidad}
+El uso de dispositivos propietarios cerrados como el ``XStick'' crea la dependencia de una compañía tercera que lo manufactura, y que podría descontinuarlo en cualquier momento. Por otro lado también se depende de ella para actualizaciones de firmware, lo cuál podría exponer vulnerabilidades en el sistema en el caso de que estas no sean parchadas por el propio fabricante. Por ser de arquitectura cerrada, no permite ninguna alteración por parte del desarrollador, lo cuál limita en gran medida las opciones de escalabilidad del sistema. Es por esto que se optó por desarrollar nuestro propio controlador, el cuál sea de arquitectura abierta y cuyo firmware sea de código abierto para evitar estos problemas a futuro. Idealmente el Gateway debe de poseer una gran variedad de interfaces y soportar diversos protocolos de comunicación para adicionar funcionalidades a futuro.
+% Datos celulares, control de energía, seguridad y cifrado de la información
+
+\subparagraph{Mantenibilidad}
+La mantenibilidad de este proyecto permitirá que sea fácil para otros poder basarse en el para escalarlo o desarrollar proyectos similares. Un diseño intuitivo, en donde los componentes estén claramente separados y documentados permitirá que pueda ser retomado rápidamente y las modificaciones pertinentes puedan ser implementadas sin gran problema.
+
+\subparagraph{Costo}
+Para que el proyecto sea factible a gran escala es de vital importancia el reducir su costo. El uso de una computadora y el hardware propietario del XStick, hacen que este se dispare por arriba de los \$300 USD. Por otro lado, la propuesta de hardware actual reduce este costo a poco más de \$75 USD\cite{digikey_xstick} (a la fecha de este reporte).
+
+\subparagraph{Tamaño}
+Las dimensiones del proyecto son importantes, principalmente por el tema de las \textit{smart cities}. Un sistema pequeño se puede mezclar fácilmente en entornos como los son edificios y hogares inteligentes.
+
+\subparagraph{Usabilidad}
+La usabilidad es uno de los principales factores de este proyecto. Por un lado debe de contar con una interfase sencilla con la cuál el usuario final pueda interactuar, y que le permita controlar la WSN sin requerir de un conocimiento técnico relacionado a su funcionamiento. Por otra parte, el firmware y el software del sistema deben de permitirle al desarrollador escalar el producto fácilmente en caso de requerirse a futuro. Es también de gran importancia que la WSN pueda recibir actualizaciones directamente desde el Gateway, para evitar así la tediosa tarea de cargar una laptop hacia cada nodo de la red y conectarla mediante de un programador para actualizar su firmware.
+
+\newpage
+
+\section{Literatura} % State of the art, 4 artículos, 1,000 palabras
+Para el estado del arte se encontraron artículos de tres trabajos similares, cuyos resúmenes se encontrarán a continuación
+
+\subsection{Design, Implementation and Evaluation of an IoT\linebreak Home Automation System\cite{home_auto}}
+Este artículo trae a la mesa el tema de \textit{fog IoT computing}, la cuál se encarga de traer los servicios de la nube a nodos IoT. Para la comunicación de dichos nodos a el internet, los autores diseñaron, implementaron y evaluaron un Gateway similar al que se propone en este proyecto de tesis. Dicho Gateway utilizará Zigbee para comunicarse con los nodos de cómputo y WiFi para comunicarlos con el internet. El artículo también menciona que ambas tecnologías coexisten en la banda de 2.4 GHz, lo cuál genera colisiones. El sistema que ellos proponen permite la integración de ambas tecnologías de manera fluida y libre de colisiones.
+
+\subsection{IoT Platform for Real-Time Monitoring\cite{iot_platform}}
+Al igual que en el artículo anterior, los autores desarrollan un Gateway IoT para conectar una red de sensores al internet. La principal diferencia es que los autores proponen el uso de u conjunto de hardware específico (una computadora Raspberry Pi adicionada con un módulo propietario de Xbee para darle capacidades de comunicación vía  Zigbee) y no toman en cuenta las colisiones dado que su Gateway utiliza solo un protocolo a la vez.
+
+\subsection{From WSN towards WoT\cite{wsn_to_wot}}
+El tercer artículo habla de los diferentes medios de comunicación entre diversas WSN locales, y proponen un estándar para realizar una \textit{Web Of Things (WoT)}, análoga al internet. En el artículo se muestra dicha implementación haciendo uso de la especificación de \textit{OpenAPI}, entre otras herramientas. Dicha especificación permite generalizar bajo un mismo estándar las diferentes interfaces de software que exponen las redes locales de dispositivos IoT.
+
+\newpage
+
+\section{Trabajo previo} % 400 palabras
+\subsection{Tesis de Ingeniería en Computación de Arturo López}
+\subsection{Tesis de Maestría de Ingeniería de la Computación de Luis Octavio}
+% Mencionar el trabajo de Luis Octavio como antecedente (tesis y artículo de concurso)
+% Mencionar que yo estoy continuando el proyecto
+
+\section{Propuesta de trabajo} % 2,500 palabras
+
+\subsection{Objetivo general}
+
+El objetivo de este proyecto es el de diseñar, desarrollar y validar un Gateway IoT de bajo consumo de energía, cuya función será la de intermediario (o puente) entre una red inalámbrica de sensores meteorológicos Zigbee y una aplicación alojada en la nube encargada de monitorear y controlar dicha red.
+
+\subsection{Objetivos específicos}
+
+\begin{enumerate}
+\item Definir los requerimientos de hardware y software.
+\item Seleccionar la plataforma de hardware y software adecuada para el diseño del sistema embebido de acuerdo a los requerimientos propuestos. % Bajo consumo de energía, WiFi, Zigbee, múltiples interfaces seriales
+\item Adaptar la metodología co-design de forma tal que facilite el desarrollo y la integración del sistema.
+\item Revisar las características y capacidades de la plataforma seleccionada para mapear la distribución óptima de tareas.
+\item Diseñar la arquitectura de hardware y software y el flujo de trabajo de los componentes en base a la metodología de co-design, considerando los enfoques de \textit{top-down} y \textit{bottom-up}.
+\item Desarrollo y validación del software embebido para comunicar la WSN y el Gateway.
+\item Desarrollo y validación del software embebido para conectar el Gateway a Internet.
+\item Validar la integración de toda la solución de software embebido.
+\item Verificar que la solución satisfaga los requisitos.
+\end{enumerate}
+
+\newpage
+
+\subsection{Justificación}
+Revisando los trabajos revisados en el estado del arte se puede observar que son pensados para interiores, en dónde disponen de acceso a la red energética por lo que el bajo consumo de energía no fue considerado como requerimiento durante su diseño; Esto limita el dominio de aplicación de dichos sistemas a ciudades y edificios. Además, uno de los artículos propone el uso de computadoras y hardware propietario que pueden elevar considerablemente los costos cuando se busca realizar una implementación de WSNs a gran escala. Para el proyecto de esta tesis se pretende desarrollar un Gateway similar a los ya mencionados, pero cuyas principales diferencias serán las siguientes
+
+\paragraph{Consumo de energía}
+El aporte más grande de este proyecto es el de diseñar el firmware y software teniendo como requerimiento el bajo consumo de energía. Esto le permitirá ser utilizado en un rango mayor de aplicaciones, en la cuales no se cuente con una red eléctrica que alimente el sistema. La principal desventaja de buscar el bajo consumo de energía es que se puede llegar a perder de manera parcial (o total) el procesamiento en tiempo real, sin embargo esto no es algo que se requiere para aplicaciones de monitoreo de sensores, en donde no es crítico el envío de información de manera inmediata.
+
+\paragraph{Bajo costo}
+De igual manera, para este proyecto se busca el reducir costos considerablemente. Ambos Gateways propuestos en la literatura proponen de el uso de computadoras embebidas, como la Raspberry Pi. Dichas computadoras disponen de una gran cantidad de recursos que no son requeridos para este tipo de aplicaciones, y solamente aumentan el costo. Para este proyecto se busca diseñar un sistema embebido basándose en plataformas de desarrollo existentes (en vez de computadoras), buscando así reducir considerablemente los costos. A cambio de esto, el desarrollador ahora cuenta con menos recursos para desarrollar su firmware, lo cual le impone un reto adicional.
+
+\paragraph{Usabilidad}
+Una característica de los artículos es que los usuarios finales de sus sistemas son los mismos autores, quienes tienen el conocimiento técnico necesario para utilizar dichos Gateways. A diferencia de ellos ellos, nosotros buscamos que el proyecto sea fácil de usar, tanto por los usuarios finales como por los desarrolladores. Para lograr esto se desarrollará una GUI que le permita al usuario interactuar fácilmente con el sistema, el cuál a su vez será desarrollado de manera concisa y modular para facilitarle la tarea a futuros desarrolladores que deseen retomarlo.
+
+\paragraph{Mantenibilidad y escalabilidad}
+Como se acaba de mencionar, se busca que este proyecto sea fácil de ser retomado por futuros desarrolladores. Para esto se busca que el diseño y la implementación sean mantenibles, en donde las abstracciones de los componentes estén bien definidas y documentadas, lo cual facilite modificaciones posteriores. También se desea que sea fácil de escalar, por lo que se seleccionó una plataforma que soporta diversos protocolos de comunicación, así como también posee un GPIO extenso para la fácil adición de módulos.
+
+\subsection{Alcance}
+El alcance de este proyecto se divide en dos campos. por un lado se tiene el Gateway y su comunicación con la WSN, y por el otro la comunicación del Gateway hacia el internet.
+
+\paragraph{Software embebido}
+Se diseñará, implementará y validará el Gateway de bajo consumo energético y su software embebido. El Gateway realizará la lectura y almacenamiento de los datos generados por la WSN, permitirá configurar los tiempos de \textit{sleep mode} de los motes (nodo de sensores), y además podrá activar y desactivar las variables que serán medidas por cada uno de ellos. El software embebido le permitirá al Gateway comunicarse mediante WiFi con una aplicación de front-end con la cuál el usuario podrá interactuar con el y controlar dichos parámetros de la WSN.
+
+\paragraph{Software}
+La aplicación de software permitirá al usuario controlar el Gateway y la WSN desde un ordenador conectado mediante WiFi a la misma red local que ellos. La aplicación será desarrollada en Python en conjunto con los frameworks de Tkinter para la GUI, Flask para el servidor backend y SQLite para el almacenamiento de los datos. Esta aplicación le permitirá al usuario leer el historial de datos de la WSN, activar o desactivar los sensores de los motes, y cambiar la frecuencia de muestreo de los datos.
+
+% Aportación:
+% - Plataforma de desarrollo de sistemas embebidos
+% - WiFi y Zigbee
+% - Low-power
+% - Bajo costo
+% - Usabilidad, mantenibilidad y escalabilidad
+
+\subsection{Metodología de trabajo}
+% ¿Cómo se implementara la metodología co-design?
+% Hacer uso extenso de diagramas UML
+
+\subsection{Avances del proyecto}
+
+\subsubsection{Análisis de los requerimientos}
+
+\subsubsection{Herramientas de hardware~y~software}
+% Mencionar las ventajas de este SoC (principalmente su stack de WiFi y Zigbee)
+
+\subsubsection{Documentación de la plataforma seleccionada}
+
+\subsubsection{Entrenamiento en la plataforma y SDK}
+% - Descripción breve del SDK (módulos, librerías, herramientas, etc)
+% - Entorno de desarrollo
+
+% \section{Caso de uso del sistema} ------- Pendiente para el siguiente reporte
+% Diagramas UML de casos de uso del usuario
+
+\section{Evaluación del trabajo}
+% Pruebas y validación del sistema
+
+\section{Cronograma}
+% Incluir el trabajo planeado para las vacaciones
+% Fecha de fin planeada para febrero 2023
+
+\section{Comentarios}
+% Escalabilidad, mantenibilidad y modularidad (de HW y de SW)
+% Usabilidad a través de una GUI en la app del back-end
+
+\section{Bibliografía}
+\printbibliography
+% 2 referencias de SoC
+% 4 Literatura
+% 1 Co-design
+% Trabajo previo: tesis de Arturo y artículo de Luis Octavio
+
+\end{document}
