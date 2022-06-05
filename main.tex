@@ -46,7 +46,7 @@ Cesar Guerra (Comité)
 
 \subsection{Resumen}
 \paragraph{}
-Una de las maneras de coordinar y almacenar la información generada por una red de sensores inalámbricos (WSN, por sus siglas en inglés) Zigbee, cuyo propósito es el monitoreo de condiciones meteorológicas, es mediante un módulo\linebreak ``XStick'' y una computadora. El uso de una computadora no solo aumenta\linebreak considerablemente el costo del proyecto si no que también descarta por completo la idea de tener la WSN desconectada de la red eléctrica debido al alto consumo energético. La otra manera es mediante un Gateway propietario de una empresa tercera que usualmente son de caja cerrada y cuyos protocolos inalámbricos son limitados, además de que tienen un costo elevado y se corre el riesgo de que sean descontinuados o se vuelvan obsoletos. El depender de un controlador que es propietario y de diseño cerrado limita mucho la escalabilidad del proyecto, aumenta considerablemente el costo, y restringe la posibilidad de reducir el consumo energético. Esto último tiene impacto cuando la solución requiere tiempos prolongados a la intemperie y se alimenta mediante baterías.
+Una de las maneras de coordinar y almacenar la información generada por una red de sensores inalámbricos (WSN, por sus siglas en inglés) Zigbee, cuyo propósito es el monitoréo de condiciones meteorológicas, es mediante un módulo\linebreak ``XStick'' y una computadora. El uso de una computadora no solo aumenta\linebreak considerablemente el costo del proyecto si no que también descarta por completo la idea de tener la WSN desconectada de la red eléctrica debido al alto consumo energético. La otra manera es mediante un Gateway propietario de una empresa tercera que usualmente son de caja cerrada y cuyos protocolos inalámbricos son limitados, además de que tienen un costo elevado y se corre el riesgo de que sean descontinuados o se vuelvan obsoletos. El depender de un controlador que es propietario y de diseño cerrado limita mucho la escalabilidad del proyecto, aumenta considerablemente el costo, y restringe la posibilidad de reducir el consumo energético. Esto último tiene impacto cuando la solución requiere tiempos prolongados a la intemperie y se alimenta mediante baterías.
 
 \paragraph{}
 La solución a estos problemas es el desarrollar un Gateway a la medida que pueda reemplazar a dicho controladores, integrando las características relevantes de ellos en un sistema embebido, lo cual nos permitirá reducir costos y consumo de energía, así como también abrirle las puertas a la escalabilidad para que el proyecto pueda ser retomado en un futuro, o bien, pueda ser adaptado para resolver otro tipo de problemas. Este Gateway será desarrollado en una plataforma de desarrollo cuyo núcleo principal es un system on a chip (SoC). El software embebido desarrollado permitirá controlar los diferentes componentes del sistema, así como activarlos y desactivarlos en tiempo real para reducir el\linebreak consumo energético del sistema. La selección de dicha plataforma se llevará a cabo mediante el análisis de requerimientos del problema a resolver, y se considerará la metodología co-design que facilita el desarrollo de sistemas que involucran la integración de hardware y software.
@@ -70,7 +70,7 @@ El uso de dispositivos propietarios cerrados como el ``XStick'' crea la dependen
 \subparagraph{Mantenibilidad}
 La mantenibilidad de este proyecto permitirá que sea fácil para otros poder basarse en el para escalarlo o desarrollar proyectos similares. Un diseño intuitivo, en donde los componentes estén claramente separados y documentados permitirá que pueda ser retomado rápidamente y las modificaciones pertinentes puedan ser implementadas sin gran problema.
 
-\subparagraph{Costo}
+\subparagraph{Costo} \label{sec:costo}
 Para que el proyecto sea factible a gran escala es de vital importancia el reducir su costo. El uso de una computadora y el hardware propietario del XStick, hacen que este se dispare por arriba de los \$300 USD. Por otro lado, la propuesta de hardware actual reduce este costo a poco más de \$75 USD\cite{digikey_xstick} (a la fecha de este reporte).
 
 \subparagraph{Tamaño}
@@ -96,10 +96,13 @@ El tercer artículo habla de los diferentes medios de comunicación entre divers
 \newpage
 
 \section{Trabajo previo} % 400 palabras
-\subsection{Tesis de Ingeniería en Computación de Arturo López}
-\subsection{Tesis de Maestría de Ingeniería de la Computación de Luis Octavio}
-% Mencionar el trabajo de Luis Octavio como antecedente (tesis y artículo de concurso)
-% Mencionar que yo estoy continuando el proyecto
+El objetivo a largo plazo de este proyecto es el de diseñar, implementar y validar una WSN con una capacidad aproximada de 300 nodos que permitan medir y almacenar la información de variables meteorológicas. También se busca el poder interactuar con dicha red de sensores mediante el internet.
+\subsection{Tesis de licenciatura en Ingeniería en Computación de Arturo López}
+En las primeras etapas del proyecto se realizó un trabajo de tesis de licenciatura titulado "Diseño de una micro-estación meteorológica capaz de generar una red de sensores inalámbrica" presentada por el Ing. Arturo López Rangel. En ese trabajo se implementó el primer prototipo de estación meteorológica, el cuál era capaz de realizar mediciones de radiación solar, temperatura, humedad relativa y presión barométrica. Los resultados obtenidos de las mediciones atmosféricas eran después enviados a una computadora mediante el protocolo de Zigbee, haciendo uso de un XStick (propietario de XBee) para funcionar de intermediario entre la computadora y la WSN. La escala de este trabajo fue una única micro-estación conectada al coordinador (PC y XStick) mediante USB y Zigbee.
+\subsection{Tesis de maestría de Ingeniería de la Computación de Luis Ortega}
+La siguiente etapa del proyecto fue realizada como parte del trabajo de tesis de maestría (aún no concluido) del Ing. Luis Ortega Gutiérrez, el cuál retoma la red WSN y la escala agregándole el uso de los denominados \textit{componentes virtuales}, los cuales permiten configurar los nodos de la WSN de manera dinámica y remota. Esto funciona a través de archivos de configuración que le permiten al usuario configurar los sensores del nodo. La escala de este proyecto fue de 3 nodos conectados a un coordinador mediante Zigbee. Dicho coordinador sigue siendo una computadora y un XStick, lo cuál se busca reemplazar en el trabajo actual.
+
+\newpage
 
 \section{Propuesta de trabajo} % 2,500 palabras
 
@@ -160,14 +163,59 @@ La aplicación de software permitirá al usuario controlar el Gateway y la WSN d
 
 \subsection{Avances del proyecto}
 
-\subsubsection{Análisis de los requerimientos}
+\subsubsection{Análisis de los requerimientos} \label{sec:reqs}
+El objetivo principal de este proyecto es el de desarrollar un Gateway de bajo consumo de energía que permita al usuario interactuar con la WSN a través del internet. Dado que la WSN utiliza Zigbee para comunicación inalámbrica, el Gateway debe de tener soporte para dicho protocolo, preferentemente ya integrado en el hardware seleccionado facilitar las tareas de diseño y desarrollo. En tema de trabajos futuros, idealmente el hardware poseerá soporte para varios protocolos de comunicación serial, además de poseer una cantidad considerable de pines GPIO, lo cuál permitirá la escalabilidad del proyecto permitiendo adicionarle nuevos módulos, características y funcionalidades. La idea de este Gateway es la de desplegar a gran escala las WSN, por lo que es crítico reducir los costos fijos del hardware. Ya por último, se busca que sea fácil el interactuar con la WSN desde internet, ya que el usuario final no necesariamente será alguien experto en materia, por tanto es importante el desarrollo de una GUI para el front-end del sistema que le permita leer los datos de la WSN y reconfigurarla en tiempo real.
+
+
+En resumen, los requerimientos son
+\begin{itemize}
+\item Bajo consumo de energía.
+\item Bajo costo.
+\item Poseer comunicación mediante Zigbee y WiFi.
+\item Soportar múltiples protocolos seriales.
+\item Poseer un extenso GPIO.
+\item Facilidad de uso por parte del usuario.
+\item Facilidad de ser mantenido y escalado en trabajos futuros.
+\end{itemize}
 
 \subsubsection{Herramientas de hardware~y~software}
-% Mencionar las ventajas de este SoC (principalmente su stack de WiFi y Zigbee)
+\paragraph{Hardware}
+Se optó por utilizar el SoC QCA4020 de la empresa Qualcomm porque cumple con todos los requisitos ya mencionados. Permite modos de bajo consumo de energía en sus tres núcleos, tiene un costo de aproximadamente \$75 USD por lo cuál es bastante accesible en comparación a las soluciones mencionadas en la sección \ref{sec:costo}. Soporta una gran cantidad de protocolos seriales como I\textsuperscript{2}C, UART, HS UART, QSPI, USB2.0, entre otras. Tiene un núcleo específico para la comunicación por Zigbee y otro para WiFi. En la sección \ref{sec:doc_hw} se describirá más a detalle el hardware.
 
-\subsubsection{Documentación de la plataforma seleccionada}
+\paragraph{Software embebido}
+El software embebido será desarrollado en C, haciendo uso del SDK proporcionado por Qualcomm. Cabe mencionar que, a pesar de existir alternativas como micropython o rust, se eligió C por que permite un mayor control sobre del hardware, lo cuál es vital cuando se busca reducir el consumo de energía.
 
-\subsubsection{Entrenamiento en la plataforma y SDK}
+\paragraph{Software front-end}
+Para el desarrollo del front-end se seleccionó Python por su conveniencia y diversidad de módulos, utilizando flask para el servidor y tkiner para la GUI. Para la base de datos se utilizará SQLite por su facilidad de ser integrada con flask.
+
+\subsubsection{Documentación de la plataforma seleccionada} \label{sec:doc_hw}
+Se seleccionó el kit de desarrollo para el SoC QCA4020 ya que facilita a gran medida la implementación y depuración del software embebido ya que expone directamente la interfaz JTAG a USB. El SoC QCA4020 cuenta con diversas características que satisfacen todos los requerimientos del proyecto.
+
+\paragraph{Núcleos y consumo de energía}
+El SoC posee tres núcleos de procesamiento:
+\begin{itemize}
+\item Un ARM Cortex-M4F como núcleo de procesamiento de la aplicación.
+\item Un ARM Cortex-M0 encargado del stack de comunicación para el estándar IEEE 802.15.4, el cuál controla los stacks de Bluetooth 5, Zigbee y Thread.
+\item Un Tensilica Xtensa de 130 MHz, dedicado exclusivamente a WiFi.
+\end{itemize}
+
+Estos núcleos poseen características que les permite ser apagados o entrar en modos de bajo consumo de energía, lo cuál es vital para este proyecto.
+
+\paragraph{Interfaces y protocolos seriales}
+El SoC posee las siguientes interfaces
+\begin{itemize}
+\item I\textsuperscript{2}S
+\item SDIO2.0
+\item SPI/Q-SPI
+\item I\textsuperscript{2}C
+\item GPIO
+\item SPI
+\item UART
+\end{itemize}
+
+Además tiene 8 interfaces PWM optimizadas para iluminación LED y un ADC de 8 canales, con una resolución de 12 bits, y una tasa de muestreo de 1Msps.
+
+\subsection{Entrenamiento en la plataforma y SDK}
 % - Descripción breve del SDK (módulos, librerías, herramientas, etc)
 % - Entorno de desarrollo
 
@@ -175,7 +223,7 @@ La aplicación de software permitirá al usuario controlar el Gateway y la WSN d
 % Diagramas UML de casos de uso del usuario
 
 \section{Evaluación del trabajo}
-% Pruebas y validación del sistema
+El proyecto será evaluado con base a casos de uso que cubran todos los requerimientos de la sección \ref{sec:reqs}
 
 \section{Cronograma}
 % Incluir el trabajo planeado para las vacaciones
