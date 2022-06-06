@@ -36,7 +36,12 @@ Cesar Guerra (Comité)
     \end{center}
     \vspace{1ex}
     \begin{abstract}
-        \lipsum[1-2]
+        % Planteamiento del problema
+        En la actualidad existen una gran variedad de dispositivos IoT que facilitan el control de diversos ambientes, así como monitoreo de sus diferentes variables. Existen dos cuellos de botella en dichos dispositivos: los diferentes protocolos de comunicación que existen para comunicarlos, y la dependencia de la red eléctrica para su control y monitoreo. Ambas restricciones limitan en gran tamaño el dominio de entornos en los que se pueden implementar soluciones del IoT, así como también reducen la diversidad de hardware que se pueda utilizar a subconjuntos que sean compatibles unos con otros.
+        % Objetivos
+        El objetivo de este proyecto es el de diseñar, implementar y validar un gateway IoT que solucione ambos 
+        % Estado del arte
+        % Evaluación
     \end{abstract}
 \end{titlepage}
 
@@ -46,7 +51,7 @@ Cesar Guerra (Comité)
 
 \subsection{Resumen}
 \paragraph{}
-Una de las maneras de coordinar y almacenar la información generada por una red de sensores inalámbricos (WSN, por sus siglas en inglés) Zigbee, cuyo propósito es el monitoréo de condiciones meteorológicas, es mediante un módulo\linebreak ``XStick'' y una computadora. El uso de una computadora no solo aumenta\linebreak considerablemente el costo del proyecto si no que también descarta por completo la idea de tener la WSN desconectada de la red eléctrica debido al alto consumo energético. La otra manera es mediante un Gateway propietario de una empresa tercera que usualmente son de caja cerrada y cuyos protocolos inalámbricos son limitados, además de que tienen un costo elevado y se corre el riesgo de que sean descontinuados o se vuelvan obsoletos. El depender de un controlador que es propietario y de diseño cerrado limita mucho la escalabilidad del proyecto, aumenta considerablemente el costo, y restringe la posibilidad de reducir el consumo energético. Esto último tiene impacto cuando la solución requiere tiempos prolongados a la intemperie y se alimenta mediante baterías.
+Una de las maneras de coordinar y almacenar la información generada por una red de sensores inalámbricos (WSN, por sus siglas en inglés) Zigbee, cuyo propósito es el monitoreo de condiciones meteorológicas, es mediante un módulo\linebreak ``XStick'' y una computadora. El uso de una computadora no solo aumenta\linebreak considerablemente el costo del proyecto si no que también descarta por completo la idea de tener la WSN desconectada de la red eléctrica debido al alto consumo energético. La otra manera es mediante un Gateway propietario de una empresa tercera que usualmente son de caja cerrada y cuyos protocolos inalámbricos son limitados, además de que tienen un costo elevado y se corre el riesgo de que sean descontinuados o se vuelvan obsoletos. El depender de un controlador que es propietario y de diseño cerrado limita mucho la escalabilidad del proyecto, aumenta considerablemente el costo, y restringe la posibilidad de reducir el consumo energético. Esto último tiene impacto cuando la solución requiere tiempos prolongados a la intemperie y se alimenta mediante baterías.
 
 \paragraph{}
 La solución a estos problemas es el desarrollar un Gateway a la medida que pueda reemplazar a dicho controladores, integrando las características relevantes de ellos en un sistema embebido, lo cual nos permitirá reducir costos y consumo de energía, así como también abrirle las puertas a la escalabilidad para que el proyecto pueda ser retomado en un futuro, o bien, pueda ser adaptado para resolver otro tipo de problemas. Este Gateway será desarrollado en una plataforma de desarrollo cuyo núcleo principal es un system on a chip (SoC). El software embebido desarrollado permitirá controlar los diferentes componentes del sistema, así como activarlos y desactivarlos en tiempo real para reducir el\linebreak consumo energético del sistema. La selección de dicha plataforma se llevará a cabo mediante el análisis de requerimientos del problema a resolver, y se considerará la metodología co-design que facilita el desarrollo de sistemas que involucran la integración de hardware y software.
