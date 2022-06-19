@@ -6,7 +6,10 @@
 \usepackage{biblatex}
 \usepackage{graphicx}
 \usepackage{lipsum}
+\usepackage{titlesec}
+\usepackage{pgfgantt}
 
+\setcounter{secnumdepth}{5}
 \addbibresource{bibliography.bib}
 \graphicspath{ {./Figuras/} }
 
@@ -17,7 +20,6 @@ Carlos Soubervielle (Asesor) \and
 Marco Tulio (Comité) \and
 Cesar Guerra (Comité)
 }
-\date{Junio 2022}
 
 \begin{document}
 
@@ -30,18 +32,21 @@ Cesar Guerra (Comité)
         \vspace{3ex}
         {\large Marco Tulio (sinodal técnico)\hspace{1em}Cesar Guerra (sinodal monitor)} \\
         \vspace{3ex}
-        Julio del 2022 \\
+        Junio del 2022 \\
         \vspace{2ex}
+        % La parte de controlar la WSN que como opcional{\textit{``Design of a Low-Power Gateway to Control and Connect a Weather Monitoring WSN to the Internet through Wireless Protocols''}}
         {\textit{``Design of a Low-Power Gateway to Connect a Weather Monitoring WSN to the Internet through Wireless Protocols''}}
     \end{center}
     \vspace{1ex}
     \begin{abstract}
         % Planteamiento del problema
-        En la actualidad existen una gran variedad de dispositivos IoT que facilitan el control de diversos ambientes, así como monitoreo de sus diferentes variables. Existen dos cuellos de botella en dichos dispositivos: los diferentes protocolos de comunicación que existen para comunicarlos, y la dependencia de la red eléctrica para su control y monitoreo. Ambas restricciones limitan en gran tamaño el dominio de entornos en los que se pueden implementar soluciones del IoT, así como también reducen la diversidad de hardware que se pueda utilizar a subconjuntos que sean compatibles unos con otros.
+        En la actualidad existen una gran variedad de dispositivos IoT que facilitan el monitoreo de diversos ambientes, así como monitoreo de sus diferentes variables. Existen dos cuellos de botella en dichos dispositivos: los diferentes protocolos de comunicación que existen para comunicarlos, y la dependencia de la red eléctrica para su control y monitoreo. Ambas restricciones limitan en gran tamaño el dominio de entornos en los que se pueden implementar soluciones del IoT, así como también reducen la diversidad de hardware que se pueda utilizar a subconjuntos que sean compatibles unos con otros.
         % Objetivos
-        El objetivo de este proyecto es el de diseñar, implementar y validar un gateway IoT que solucione ambos 
+        El objetivo de este proyecto es el de diseñar, implementar y validar un Gateway IoT que solucione ambas restricciones: por un lado contará con soporte para diferentes protocolos de comunicación, así como también con la posibilidad de escalarse para agregar soporte a nuevos protocolos; por otro lado, será diseñado mediante un SoC adecuado, lo cuál disminuirá considerablemente el consumo de energía usando las características y herramientas que provee la plataforma y su SDK.
         % Estado del arte
+        Actualmente existen propuestas de Gateways, sin embargo, presentan varias limitaciones como son: el alto consumo de energía (no trabajan con baterías), la escasa variedad de protocolos inalámbricos, hardware complejo, su software no tiene buena usabilidad, mantenibilidad y escalabilidad, altos costos, entre otras. El aporte de este proyecto será el de una solución que considere todas estas características durante su diseño e implementación.
         % Evaluación
+        Dichas métricas serán evaluadas de manera iterativa e incremental a lo largo del proceso de diseño y desarrollo, para asegurar que los requerimientos del proyecto sean satisfechos al final de este, así como también su calidad.
     \end{abstract}
 \end{titlepage}
 
@@ -50,76 +55,75 @@ Cesar Guerra (Comité)
 \section{Problema a resolver}
 
 \subsection{Resumen}
-\paragraph{}
-Una de las maneras de coordinar y almacenar la información generada por una red de sensores inalámbricos (WSN, por sus siglas en inglés) Zigbee, cuyo propósito es el monitoreo de condiciones meteorológicas, es mediante un módulo\linebreak ``XStick'' y una computadora. El uso de una computadora no solo aumenta\linebreak considerablemente el costo del proyecto si no que también descarta por completo la idea de tener la WSN desconectada de la red eléctrica debido al alto consumo energético. La otra manera es mediante un Gateway propietario de una empresa tercera que usualmente son de caja cerrada y cuyos protocolos inalámbricos son limitados, además de que tienen un costo elevado y se corre el riesgo de que sean descontinuados o se vuelvan obsoletos. El depender de un controlador que es propietario y de diseño cerrado limita mucho la escalabilidad del proyecto, aumenta considerablemente el costo, y restringe la posibilidad de reducir el consumo energético. Esto último tiene impacto cuando la solución requiere tiempos prolongados a la intemperie y se alimenta mediante baterías.
-
-\paragraph{}
-La solución a estos problemas es el desarrollar un Gateway a la medida que pueda reemplazar a dicho controladores, integrando las características relevantes de ellos en un sistema embebido, lo cual nos permitirá reducir costos y consumo de energía, así como también abrirle las puertas a la escalabilidad para que el proyecto pueda ser retomado en un futuro, o bien, pueda ser adaptado para resolver otro tipo de problemas. Este Gateway será desarrollado en una plataforma de desarrollo cuyo núcleo principal es un system on a chip (SoC). El software embebido desarrollado permitirá controlar los diferentes componentes del sistema, así como activarlos y desactivarlos en tiempo real para reducir el\linebreak consumo energético del sistema. La selección de dicha plataforma se llevará a cabo mediante el análisis de requerimientos del problema a resolver, y se considerará la metodología co-design que facilita el desarrollo de sistemas que involucran la integración de hardware y software.
+Una de las maneras de coordinar y almacenar la información generada por una red de sensores inalámbricos (WSN, por sus siglas en inglés) Zigbee, cuyo propósito es el monitoreo de condiciones meteorológicas, es mediante un módulo\linebreak ``XStick'' y una computadora. El uso de una computadora no solo aumenta\linebreak considerablemente el costo del proyecto si no que también descarta por completo la idea de tener la WSN desconectada de la red eléctrica debido al alto consumo energético. La otra manera es mediante un Gateway propietario de una empresa tercera que usualmente son de caja cerrada y cuyos protocolos inalámbricos son limitados, además de que tienen un costo elevado y se corre el riesgo de que sean descontinuados o se vuelvan obsoletos. El depender de un Gateway que es propietario y de diseño cerrado limita mucho la escalabilidad del proyecto, aumenta considerablemente el costo, y restringe la posibilidad de reducir el consumo energético. Esto último tiene impacto cuando la solución requiere tiempos prolongados a la intemperie y se alimenta mediante baterías. La solución a estos problemas es el desarrollar un Gateway a la medida que pueda reemplazar a dicho plataforma propietaria, integrando las características relevantes de ellos en un sistema embebido, lo cual nos permitirá reducir costos y consumo de energía, así como también abrirle las puertas a la escalabilidad para que el proyecto pueda ser retomado en un futuro, o bien, pueda ser adaptado para resolver otro tipo de problemas. Este Gateway será desarrollado en una plataforma de desarrollo cuyo núcleo principal es un system on a chip (SoC). El software embebido desarrollado deberá controlar los diferentes componentes del Gateway, así como activarlos y desactivarlos en tiempo real para reducir el consumo energético. La selección de dicha plataforma se llevará a cabo mediante el análisis de requerimientos del problema a resolver, y se considerará la metodología co-design que facilita el desarrollo de sistemas que involucran la integración de hardware y software.
 
 \newpage
 
 \subsection{Explicación}
-\paragraph{}
-Actualmente existe una gran demanda de dispositivos IoT como lo son sensores, actuadores y cámaras, para ser usados en Smart Cities, vehículos autónomos y la denominada ``Industria 4.0''. Un cuello de botella de estos sistemas es la comunicación de datos hacia Internet para su posterior procesamiento en computadoras que poseen más recursos de cómputo, lo cuál es un reto ya que dichos dispositivos IoT se comunican con una diversa cantidad de protocolos de comunicación como lo son Zigbee, Bluetooth, Thread, Ethernet, entre otros, que requieren de un dispositivo que maneje dichos protocolos para la intercomunicación entre ellos y el Internet; Dicho dispositivo se denomina ``Gateway''.
+Actualmente existe una gran demanda de dispositivos IoT como lo son sensores, actuadores y cámaras, para ser usados en Smart Cities, vehículos autónomos y la denominada ``Industria 4.0''. Un cuello de botella de estos sistemas es la comunicación de datos hacia Internet para su posterior procesamiento en computadoras que poseen más recursos de cómputo, lo cuál es un reto ya que dichos dispositivos IoT se comunican con una diversa cantidad de protocolos de comunicación como lo son Zigbee, Bluetooth, Thread, Ethernet, entre otros, que requieren de un dispositivo que maneje dichos protocolos para la intercomunicación entre ellos y el Internet; Dicho dispositivo se denomina ``Gateway''. Para este proyecto se cuenta con una WSN que permite monitorear diferentes parámetros meteorológicos. Esta WSN está compuesta por diversos nodos ``End~Device'' (nodos~ED) que monitorean las condiciones meteorológicas con sus diversos sensores, para luego comunicar esta información a nodos ``Router'' (nodos~R) y estos a su vez se comunican con un nodo coordinador (nodo~C), el cual manda los datos de la red hacia el internet (ver figura \ref{fig:wsn_config}). La implementación actual de la red utiliza una laptop y un XStick para fungir como coordinador de la WSN, lo cuál no es lo óptimo y definitivamente no es la opción indicada para una versión final del proyecto debido a las siguientes restricciones:
 
-\paragraph{}
-Para este proyecto se cuenta con una WSN que permite monitorear diferentes parámetros meteorológicos. Esta WSN está compuesta por diversos nodos ``End~Device'' (nodos~ED) que monitorean las condiciones meteorológicas con sus diversos sensores, para luego comunicar esta información a nodos ``Router'' (nodos~R) y estos a su vez se comunican con un nodo controlador (nodo~C), el cual manda los datos de la red hacia el internet. La implementación actual de la red utiliza una laptop y un XStick para fungir como controlador, lo cuál no es lo óptimo y definitivamente no es la opción indicada para una versión final del proyecto debido a las siguientes restricciones:
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Figuras/Diagrama_WSN.png}
+    \caption{Ejemplo de una configuración de la WSN}
+    \label{fig:wsn_config}
+\end{figure}
 
-\subparagraph{Consumo energético}
-El alto consumo energético de una computadora (de escritorio, laptop, servidor, Raspberry Pi, etc) limita el dominio de ubicaciones en las que la WSN puede operar a aquellas que disponen de la red eléctrica, lo cuál no es deseable cuando se busca monitorear condiciones ambientales (por ejemplo en un bosque, un monte, un desierto, etc). Para superar esta limitación se requiere de un sistema con la menor cantidad de hardware que permita la comunicación de los nodos al Internet, y el único software que se ejecute en el sea el que controla la red cuando sea necesario.
+\begin{itemize}
+    \item \textbf{Consumo energético}
+    El alto consumo energético de una computadora (de escritorio, laptop, servidor, Raspberry Pi, etc) limita el dominio de ubicaciones en las que la WSN puede operar a aquellas que disponen de la red eléctrica, lo cuál no es deseable cuando se busca monitorear condiciones ambientales (por ejemplo en un bosque, un monte, un desierto, etc). Para superar esta limitación se requiere de un sistema con la menor cantidad de hardware que facilite la comunicación de los nodos al Internet.
+    
+    \item \textbf{Escalabilidad}
+    El uso de dispositivos propietarios cerrados como el ``XStick'' crea la dependencia de una compañía tercera que lo manufactura, y que podría descontinuarlo en cualquier momento. Por otro lado también se depende de ella para actualizaciones de firmware, lo cuál podría exponer vulnerabilidades en el sistema en el caso de que estas no sean parchadas por el propio fabricante. Por ser de arquitectura cerrada, no permite ninguna alteración por parte del desarrollador, lo cuál limita en gran medida las opciones de escalabilidad del sistema. Es por esto que se optó por desarrollar nuestro propio Gateway, el cuál será de arquitectura abierta y cuyo firmware será de código abierto para evitar estos problemas a futuro. Idealmente el Gateway deberá de poseer una gran variedad de interfaces y soportar diversos protocolos de comunicación inalámbrica para poder adicionar funcionalidades en un futuro.
 
-\subparagraph{Escalabilidad}
-El uso de dispositivos propietarios cerrados como el ``XStick'' crea la dependencia de una compañía tercera que lo manufactura, y que podría descontinuarlo en cualquier momento. Por otro lado también se depende de ella para actualizaciones de firmware, lo cuál podría exponer vulnerabilidades en el sistema en el caso de que estas no sean parchadas por el propio fabricante. Por ser de arquitectura cerrada, no permite ninguna alteración por parte del desarrollador, lo cuál limita en gran medida las opciones de escalabilidad del sistema. Es por esto que se optó por desarrollar nuestro propio controlador, el cuál sea de arquitectura abierta y cuyo firmware sea de código abierto para evitar estos problemas a futuro. Idealmente el Gateway debe de poseer una gran variedad de interfaces y soportar diversos protocolos de comunicación para adicionar funcionalidades a futuro.
-% Datos celulares, control de energía, seguridad y cifrado de la información
+    \newpage
+    \item \textbf{Mantenibilidad}
+    La mantenibilidad de este proyecto facilitará que otros programadores puedan basarse en el para escalarlo o desarrollar proyectos similares. Un diseño intuitivo, en donde los componentes estén claramente separados y documentados de tal forma que pueda ser retomado rápidamente y las modificaciones pertinentes puedan ser implementadas sin gran problema.
+    
+    \item \textbf{Costo} \label{sec:costo}
+    Para que el proyecto sea factible a gran escala es de vital importancia el reducir su costo. El uso de una computadora y el hardware propietario del XStick, hacen que este se dispare por arriba de los \$300 USD. Por otro lado, la propuesta de hardware actual reduce este costo a poco más de \$75 USD\cite{digikey_xstick} (a la fecha de este reporte).
+    
+    \item \textbf{Tamaño}
+    Las dimensiones del proyecto son importantes, principalmente por el tema de las \textit{smart cities}. Un sistema pequeño se puede mezclar fácilmente en entornos como los son edificios y hogares inteligentes.
+    
+    \item \textbf{Usabilidad}
+    La usabilidad es uno de los principales factores de este proyecto. Por un lado debe de contar con una interfaz sencilla con la cuál el usuario final pueda interactuar, y que le permita monitorear y procesar la información de la WSN sin requerir de un conocimiento técnico relacionado a su funcionamiento. Por otra parte, el firmware y el software del sistema deben de facilitarle al desarrollador escalar el producto en caso de requerirse a futuro. Es también de gran importancia que la WSN pueda recibir actualizaciones directamente desde el Gateway, para evitar así la tediosa tarea de cargar una laptop hacia cada nodo de la red y conectarla mediante de un programador para actualizar su firmware.
+\end{itemize}
 
-\subparagraph{Mantenibilidad}
-La mantenibilidad de este proyecto permitirá que sea fácil para otros poder basarse en el para escalarlo o desarrollar proyectos similares. Un diseño intuitivo, en donde los componentes estén claramente separados y documentados permitirá que pueda ser retomado rápidamente y las modificaciones pertinentes puedan ser implementadas sin gran problema.
+\section{Literatura}
+Para el estado del arte se encontraron artículos de tres trabajos similares, cuyos resúmenes se detallan a continuación
 
-\subparagraph{Costo} \label{sec:costo}
-Para que el proyecto sea factible a gran escala es de vital importancia el reducir su costo. El uso de una computadora y el hardware propietario del XStick, hacen que este se dispare por arriba de los \$300 USD. Por otro lado, la propuesta de hardware actual reduce este costo a poco más de \$75 USD\cite{digikey_xstick} (a la fecha de este reporte).
-
-\subparagraph{Tamaño}
-Las dimensiones del proyecto son importantes, principalmente por el tema de las \textit{smart cities}. Un sistema pequeño se puede mezclar fácilmente en entornos como los son edificios y hogares inteligentes.
-
-\subparagraph{Usabilidad}
-La usabilidad es uno de los principales factores de este proyecto. Por un lado debe de contar con una interfase sencilla con la cuál el usuario final pueda interactuar, y que le permita controlar la WSN sin requerir de un conocimiento técnico relacionado a su funcionamiento. Por otra parte, el firmware y el software del sistema deben de permitirle al desarrollador escalar el producto fácilmente en caso de requerirse a futuro. Es también de gran importancia que la WSN pueda recibir actualizaciones directamente desde el Gateway, para evitar así la tediosa tarea de cargar una laptop hacia cada nodo de la red y conectarla mediante de un programador para actualizar su firmware.
-
-\newpage
-
-\section{Literatura} % State of the art, 4 artículos, 1,000 palabras
-Para el estado del arte se encontraron artículos de tres trabajos similares, cuyos resúmenes se encontrarán a continuación
-
-\subsection{Design, Implementation and Evaluation of an IoT\linebreak Home Automation System\cite{home_auto}}
+\begin{itemize}
+\item \textbf{Design, Implementation and Evaluation of an IoT\linebreak Home Automation System\cite{home_auto}}\\
 Este artículo trae a la mesa el tema de \textit{fog IoT computing}, la cuál se encarga de traer los servicios de la nube a nodos IoT. Para la comunicación de dichos nodos a el internet, los autores diseñaron, implementaron y evaluaron un Gateway similar al que se propone en este proyecto de tesis. Dicho Gateway utilizará Zigbee para comunicarse con los nodos de cómputo y WiFi para comunicarlos con el internet. El artículo también menciona que ambas tecnologías coexisten en la banda de 2.4 GHz, lo cuál genera colisiones. El sistema que ellos proponen permite la integración de ambas tecnologías de manera fluida y libre de colisiones.
 
-\subsection{IoT Platform for Real-Time Monitoring\cite{iot_platform}}
+\item \textbf{IoT Platform for Real-Time Monitoring\cite{iot_platform}}\\
 Al igual que en el artículo anterior, los autores desarrollan un Gateway IoT para conectar una red de sensores al internet. La principal diferencia es que los autores proponen el uso de u conjunto de hardware específico (una computadora Raspberry Pi adicionada con un módulo propietario de Xbee para darle capacidades de comunicación vía  Zigbee) y no toman en cuenta las colisiones dado que su Gateway utiliza solo un protocolo a la vez.
 
-\subsection{From WSN towards WoT\cite{wsn_to_wot}}
-El tercer artículo habla de los diferentes medios de comunicación entre diversas WSN locales, y proponen un estándar para realizar una \textit{Web Of Things (WoT)}, análoga al internet. En el artículo se muestra dicha implementación haciendo uso de la especificación de \textit{OpenAPI}, entre otras herramientas. Dicha especificación permite generalizar bajo un mismo estándar las diferentes interfaces de software que exponen las redes locales de dispositivos IoT.
+\item \textbf{From WSN towards WoT\cite{wsn_to_wot}}\\
+El tercer artículo habla de los diferentes medios de comunicación entre diversas WSN locales, y proponen un estándar para realizar una \textit{Web Of Things (WoT)}, análoga al internet. En el artículo se muestra dicha implementación haciendo uso de la especificación de \textit{OpenAPI}, entre otras herramientas. Dicha especificación generaliza bajo un mismo estándar las diferentes interfaces de software que exponen las redes locales de dispositivos IoT.
+\end{itemize}
 
-\newpage
-
-\section{Trabajo previo} % 400 palabras
-El objetivo a largo plazo de este proyecto es el de diseñar, implementar y validar una WSN con una capacidad aproximada de 300 nodos que permitan medir y almacenar la información de variables meteorológicas. También se busca el poder interactuar con dicha red de sensores mediante el internet.
-\subsection{Tesis de licenciatura en Ingeniería en Computación de Arturo López}
+\section{Trabajo previo}
+%El objetivo a largo plazo de este proyecto es diseñar, implementar y validar una plataforma IoT que coordine a una WSN Zigbee mediante un Gateway de bajo consumo energético. También se busca poder controlar con dicha red de sensores mediante el internet.
+En la Facultad de Ingeniería se han desarrollado varios proyectos relacionados a las redes de sensores inalámbricas para monitoreo ambiental. Dos de las tesis en las que se basa el objetivo general de este proyecto son las siguientes.
+\subsection{Diseño de una micro-estación meteorológica capaz de generar una red de sensores inalámbrica}
 En las primeras etapas del proyecto se realizó un trabajo de tesis de licenciatura titulado "Diseño de una micro-estación meteorológica capaz de generar una red de sensores inalámbrica" presentada por el Ing. Arturo López Rangel. En ese trabajo se implementó el primer prototipo de estación meteorológica, el cuál era capaz de realizar mediciones de radiación solar, temperatura, humedad relativa y presión barométrica. Los resultados obtenidos de las mediciones atmosféricas eran después enviados a una computadora mediante el protocolo de Zigbee, haciendo uso de un XStick (propietario de XBee) para funcionar de intermediario entre la computadora y la WSN. La escala de este trabajo fue una única micro-estación conectada al coordinador (PC y XStick) mediante USB y Zigbee.
-\subsection{Tesis de maestría de Ingeniería de la Computación de Luis Ortega}
-La siguiente etapa del proyecto fue realizada como parte del trabajo de tesis de maestría (aún no concluido) del Ing. Luis Ortega Gutiérrez, el cuál retoma la red WSN y la escala agregándole el uso de los denominados \textit{componentes virtuales}, los cuales permiten configurar los nodos de la WSN de manera dinámica y remota. Esto funciona a través de archivos de configuración que le permiten al usuario configurar los sensores del nodo. La escala de este proyecto fue de 3 nodos conectados a un coordinador mediante Zigbee. Dicho coordinador sigue siendo una computadora y un XStick, lo cuál se busca reemplazar en el trabajo actual.
 
-\newpage
+\subsection{Plataforma de HW/SW basada en componentes\linebreak virtuales para el desarrollo ágil de redes de sensores inalámbricas de bajo costo}
+La siguiente etapa del proyecto fue realizada como parte del trabajo de tesis de maestría (aún no concluido) del Ing. Luis Ortega Gutiérrez, el cuál retoma la red WSN y la escala agregándole el uso de los denominados \textit{componentes virtuales}, los cuales permiten configurar los nodos de la WSN de manera dinámica. Esto funciona a través de archivos de configuración que le proveen al usuario la opción de configurar los sensores del nodo. La escala de este proyecto fue de 3 nodos conectados a un coordinador mediante Zigbee. Dicho coordinador sigue siendo una computadora y un XStick, lo cuál se busca reemplazar en el trabajo actual.
 
-\section{Propuesta de trabajo} % 2,500 palabras
+\section{Propuesta de trabajo}
 
 \subsection{Objetivo general}
 
-El objetivo de este proyecto es el de diseñar, desarrollar y validar un Gateway IoT de bajo consumo de energía, cuya función será la de intermediario (o puente) entre una red inalámbrica de sensores meteorológicos Zigbee y una aplicación alojada en la nube encargada de monitorear y controlar dicha red.
+El objetivo de este proyecto es el de diseñar, desarrollar y validar un Gateway IoT de bajo consumo de energía, cuya función será la de intermediario (o puente) entre una red inalámbrica de sensores meteorológicos Zigbee y una aplicación alojada en la nube encargada de monitorear y coordinar dicha red. Cabe señalar que la comunicación entre el Gateway y dicha aplicación será mediante WiFi.
 
 \subsection{Objetivos específicos}
 
 \begin{enumerate}
 \item Definir los requerimientos de hardware y software.
-\item Seleccionar la plataforma de hardware y software adecuada para el diseño del sistema embebido de acuerdo a los requerimientos propuestos. % Bajo consumo de energía, WiFi, Zigbee, múltiples interfaces seriales
+\item Seleccionar la plataforma de hardware y software adecuada para el diseño del sistema embebido de acuerdo a los requerimientos propuestos.
 \item Adaptar la metodología co-design de forma tal que facilite el desarrollo y la integración del sistema.
 \item Revisar las características y capacidades de la plataforma seleccionada para mapear la distribución óptima de tareas.
 \item Diseñar la arquitectura de hardware y software y el flujo de trabajo de los componentes en base a la metodología de co-design, considerando los enfoques de \textit{top-down} y \textit{bottom-up}.
@@ -129,47 +133,74 @@ El objetivo de este proyecto es el de diseñar, desarrollar y validar un Gateway
 \item Verificar que la solución satisfaga los requisitos.
 \end{enumerate}
 
-\newpage
-
 \subsection{Justificación}
-Revisando los trabajos revisados en el estado del arte se puede observar que son pensados para interiores, en dónde disponen de acceso a la red energética por lo que el bajo consumo de energía no fue considerado como requerimiento durante su diseño; Esto limita el dominio de aplicación de dichos sistemas a ciudades y edificios. Además, uno de los artículos propone el uso de computadoras y hardware propietario que pueden elevar considerablemente los costos cuando se busca realizar una implementación de WSNs a gran escala. Para el proyecto de esta tesis se pretende desarrollar un Gateway similar a los ya mencionados, pero cuyas principales diferencias serán las siguientes
+Revisando los trabajos revisados en el estado del arte se puede observar que el desarrollo de Gateways está pensado para interiores, en dónde disponen de acceso a la red eléctrica por lo que el bajo consumo de energía no fue considerado como requerimiento durante su diseño; Esto limita el dominio de aplicación de dichos sistemas a ciudades y edificios. Además, uno de los artículos propone el uso de computadoras y hardware propietario que pueden elevar considerablemente los costos cuando se busca realizar una implementación de WSNs a gran escala. Para el proyecto de esta tesis se pretende desarrollar un Gateway similar a los ya mencionados, pero cuyas principales diferencias serán las siguientes:
+\begin{itemize}
+    \item \textbf{Consumo de energía}
+    El aporte más grande de este proyecto es el de diseñar el firmware y software teniendo como requerimiento el bajo consumo de energía. Esto le abre las puertas a ser utilizado en un rango mayor de aplicaciones, en la cuales no se cuente con una red eléctrica que alimente el sistema. La principal desventaja de buscar el bajo consumo de energía es que se puede llegar a perder de manera parcial (o total) el procesamiento en tiempo real, sin embargo esto no es algo que se requiere para aplicaciones de monitorización ambiental, en donde no es crítico el envío de información de manera inmediata.
+    
+    \item \textbf{Bajo costo}
+    De igual manera, para este proyecto se busca el reducir costos considerablemente. Ambos Gateways propuestos en la literatura\cite{home_auto}\cite{iot_platform} proponen de el uso de computadoras embebidas, como la Raspberry Pi. Dichas computadoras disponen de una gran cantidad de recursos que no son requeridos para este tipo de aplicaciones, y solamente aumentan el costo. Para este proyecto se busca diseñar un sistema embebido basándose en plataformas de desarrollo de objetivo más específico (en vez de computadoras), buscando así reducir considerablemente los costos. A cambio de esto, el desarrollador ahora cuenta con menos recursos para desarrollar su firmware, lo cual le impone un reto adicional.
+    
+    \item \textbf{Usabilidad}
+    Una característica de los artículos es que los usuarios finales de sus sistemas son los mismos autores, quienes tienen el conocimiento técnico necesario para utilizar dichos Gateways. A diferencia de ellos ellos, nosotros buscamos que el proyecto sea fácil de usar, tanto por los usuarios finales como por los desarrolladores. Para lograr esto se desarrollará una GUI que le permita al usuario interactuar fácilmente con el sistema, el cuál a su vez será desarrollado de manera concisa y modular para facilitarle la tarea a futuros desarrolladores que deseen retomarlo.
 
-\paragraph{Consumo de energía}
-El aporte más grande de este proyecto es el de diseñar el firmware y software teniendo como requerimiento el bajo consumo de energía. Esto le permitirá ser utilizado en un rango mayor de aplicaciones, en la cuales no se cuente con una red eléctrica que alimente el sistema. La principal desventaja de buscar el bajo consumo de energía es que se puede llegar a perder de manera parcial (o total) el procesamiento en tiempo real, sin embargo esto no es algo que se requiere para aplicaciones de monitoreo de sensores, en donde no es crítico el envío de información de manera inmediata.
-
-\paragraph{Bajo costo}
-De igual manera, para este proyecto se busca el reducir costos considerablemente. Ambos Gateways propuestos en la literatura proponen de el uso de computadoras embebidas, como la Raspberry Pi. Dichas computadoras disponen de una gran cantidad de recursos que no son requeridos para este tipo de aplicaciones, y solamente aumentan el costo. Para este proyecto se busca diseñar un sistema embebido basándose en plataformas de desarrollo existentes (en vez de computadoras), buscando así reducir considerablemente los costos. A cambio de esto, el desarrollador ahora cuenta con menos recursos para desarrollar su firmware, lo cual le impone un reto adicional.
-
-\paragraph{Usabilidad}
-Una característica de los artículos es que los usuarios finales de sus sistemas son los mismos autores, quienes tienen el conocimiento técnico necesario para utilizar dichos Gateways. A diferencia de ellos ellos, nosotros buscamos que el proyecto sea fácil de usar, tanto por los usuarios finales como por los desarrolladores. Para lograr esto se desarrollará una GUI que le permita al usuario interactuar fácilmente con el sistema, el cuál a su vez será desarrollado de manera concisa y modular para facilitarle la tarea a futuros desarrolladores que deseen retomarlo.
-
-\paragraph{Mantenibilidad y escalabilidad}
-Como se acaba de mencionar, se busca que este proyecto sea fácil de ser retomado por futuros desarrolladores. Para esto se busca que el diseño y la implementación sean mantenibles, en donde las abstracciones de los componentes estén bien definidas y documentadas, lo cual facilite modificaciones posteriores. También se desea que sea fácil de escalar, por lo que se seleccionó una plataforma que soporta diversos protocolos de comunicación, así como también posee un GPIO extenso para la fácil adición de módulos.
+    \item \textbf{Mantenibilidad y escalabilidad}
+    Como se acaba de mencionar, se busca que este proyecto sea fácil de ser retomado por futuros desarrolladores. Para esto se busca que el diseño y la implementación sean mantenibles, en donde las abstracciones de los componentes estén bien definidas y documentadas, lo cual facilite modificaciones posteriores. También se desea que sea fácil de escalar, por lo que se seleccionó una plataforma que soporta diversos protocolos de comunicación, así como también posee un GPIO extenso para la fácil adición de módulos.
+\end{itemize}
 
 \subsection{Alcance}
-El alcance de este proyecto se divide en dos campos. por un lado se tiene el Gateway y su comunicación con la WSN, y por el otro la comunicación del Gateway hacia el internet.
+El alcance de este proyecto se divide en dos campos. por un lado se tiene le desarrollo y validación del Gateway y su comunicación con la WSN, y por el otro la comunicación del Gateway hacia el internet.
 
-\paragraph{Software embebido}
-Se diseñará, implementará y validará el Gateway de bajo consumo energético y su software embebido. El Gateway realizará la lectura y almacenamiento de los datos generados por la WSN, permitirá configurar los tiempos de \textit{sleep mode} de los motes (nodo de sensores), y además podrá activar y desactivar las variables que serán medidas por cada uno de ellos. El software embebido le permitirá al Gateway comunicarse mediante WiFi con una aplicación de front-end con la cuál el usuario podrá interactuar con el y controlar dichos parámetros de la WSN.
+\subsubsection{Software embebido}
+Se diseñará, implementará y validará el Gateway de bajo consumo energético y su software embebido. El Gateway realizará la lectura y almacenamiento de los datos generados por la WSN. El software embebido le permitirá al Gateway comunicarse mediante WiFi con una aplicación de front-end con la cuál el usuario podrá interactuar con el y procesar la información de la WSN.
 
-\paragraph{Software}
-La aplicación de software permitirá al usuario controlar el Gateway y la WSN desde un ordenador conectado mediante WiFi a la misma red local que ellos. La aplicación será desarrollada en Python en conjunto con los frameworks de Tkinter para la GUI, Flask para el servidor backend y SQLite para el almacenamiento de los datos. Esta aplicación le permitirá al usuario leer el historial de datos de la WSN, activar o desactivar los sensores de los motes, y cambiar la frecuencia de muestreo de los datos.
+% , permitirá configurar los tiempos de \textit{sleep mode} de los motes (nodo de sensores), y además podrá activar y desactivar las variables que serán medidas por cada uno de ellos
 
-% Aportación:
-% - Plataforma de desarrollo de sistemas embebidos
-% - WiFi y Zigbee
-% - Low-power
-% - Bajo costo
-% - Usabilidad, mantenibilidad y escalabilidad
+\subsubsection{Software}
+La aplicación de software le proporciona al usuario el control Gateway y la WSN desde un ordenador conectado mediante WiFi a la misma red local que ellos. La aplicación será desarrollada en Python en conjunto con los frameworks de Tkinter para la GUI, Flask para el servidor backend y SQLite para el almacenamiento de los datos. Esta aplicación le permitirá al usuario leer el historial de datos de la WSN.
 
 \subsection{Metodología de trabajo}
-% ¿Cómo se implementara la metodología co-design?
-% Hacer uso extenso de diagramas UML
+El desarrollo del proyecto será basado en la metodología co-design\cite{hwsw_codesign} ya que permite trabajar de manera simultanea la implementación de software y hardware, y cuyas especificaciones fueron descritas a la par lo cuál aumenta en gran medida la compatibilidad entre ellos, reduciendo así tiempos de entrega y complejidad en el proyecto. La figura \ref{fig:codesign_diagram} muestra las diferentes etapas de la implementación de co-design que se usará en este proyecto, así como el flujo de trabajo entre ellas. Dichas etapas serán descritas a continuación.
 
+\subsubsection{Etapas de Co-Design}
+\begin{itemize}
+    \item \textbf{Especificación del sistema}\\
+    En esta primera etapa se recopilan los requerimientos funcionales y no funcionales del sistema, y se genera una especificación general del sistema.
+    
+    \item \textbf{Fraccionamiento de hardware y software}\\
+    Se analiza la especificación del sistema y se buscan componentes de hardware, software, e interfaces que puedan satisfacer los requerimientos.
+    
+    \item \textbf{Refinamiento de las especificaciones}\\
+    Una vez seleccionados los componentes que se utilizarán, se refina la especificación del sistema con base en las características de ellos.
+    
+    \item \textbf{Especificación de los componentes}\\
+    Se realiza la especificación de los componentes de firmware, software y software embebido a desarrollar. También se especifica la manera en la que se configurará el hardware seleccionado.
+    
+    \item \textbf{Desarrollo e implementación}\\
+    Se desarrolla el firmware, software y software embebido del sistema, y se desarrollan pruebas unitarias para validar cada componente.
+    
+    \item \textbf{Integración y pruebas del sistema}\\
+    Se realiza la integración de todos los componentes, y se realizan pruebas para verificar su correcto funcionamiento.
+    
+    \item \textbf{Verificación y validación del sistema}\\
+    Se realiza la verificación y validación del sistema, asegurándose de que este cumple con sus requerimientos.
+\end{itemize}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Figuras/co-design methodology.png}
+    \caption{Flujo de trabajo de co-design}
+    \label{fig:codesign_diagram}
+\end{figure}
+
+\newpage
 \subsection{Avances del proyecto}
 
 \subsubsection{Análisis de los requerimientos} \label{sec:reqs}
-El objetivo principal de este proyecto es el de desarrollar un Gateway de bajo consumo de energía que permita al usuario interactuar con la WSN a través del internet. Dado que la WSN utiliza Zigbee para comunicación inalámbrica, el Gateway debe de tener soporte para dicho protocolo, preferentemente ya integrado en el hardware seleccionado facilitar las tareas de diseño y desarrollo. En tema de trabajos futuros, idealmente el hardware poseerá soporte para varios protocolos de comunicación serial, además de poseer una cantidad considerable de pines GPIO, lo cuál permitirá la escalabilidad del proyecto permitiendo adicionarle nuevos módulos, características y funcionalidades. La idea de este Gateway es la de desplegar a gran escala las WSN, por lo que es crítico reducir los costos fijos del hardware. Ya por último, se busca que sea fácil el interactuar con la WSN desde internet, ya que el usuario final no necesariamente será alguien experto en materia, por tanto es importante el desarrollo de una GUI para el front-end del sistema que le permita leer los datos de la WSN y reconfigurarla en tiempo real.
+El objetivo principal de este proyecto es el de desarrollar un Gateway de bajo consumo de energía que permita al usuario interactuar con la WSN a través del internet. Dado que la WSN utiliza Zigbee para comunicación inalámbrica, el Gateway debe de tener soporte para dicho protocolo, preferentemente ya integrado en el hardware seleccionado facilitar las tareas de diseño y desarrollo. En tema de trabajos futuros, idealmente el hardware poseerá soporte para varios protocolos de comunicación serial, además de poseer una cantidad considerable de pines GPIO, lo cuál facilitará la escalabilidad del proyecto dando la posibilidad de agregar nuevos módulos, características y funcionalidades.
+
+La idea de este Gateway es la de desplegar a gran escala las WSN, por lo que es crítico reducir los costos fijos del hardware. Ya por último, se busca que sea fácil el interactuar con la WSN desde internet, ya que el usuario final no necesariamente será alguien experto en materia, por tanto es importante el desarrollo de una GUI para el front-end del sistema que le permita leer los datos de la WSN y reconfigurarla en tiempo real.
 
 
 En resumen, los requerimientos son
@@ -184,14 +215,21 @@ En resumen, los requerimientos son
 \end{itemize}
 
 \subsubsection{Herramientas de hardware~y~software}
-\paragraph{Hardware}
-Se optó por utilizar el SoC QCA4020 de la empresa Qualcomm porque cumple con todos los requisitos ya mencionados. Permite modos de bajo consumo de energía en sus tres núcleos, tiene un costo de aproximadamente \$75 USD por lo cuál es bastante accesible en comparación a las soluciones mencionadas en la sección \ref{sec:costo}. Soporta una gran cantidad de protocolos seriales como I\textsuperscript{2}C, UART, HS UART, QSPI, USB2.0, entre otras. Tiene un núcleo específico para la comunicación por Zigbee y otro para WiFi. En la sección \ref{sec:doc_hw} se describirá más a detalle el hardware.
+\begin{itemize}
+\item \textbf{Hardware}
+Se optó por utilizar el SoC QCA4020 de la empresa Qualcomm porque cumple con todos los requisitos ya mencionados. Permite modos de bajo consumo de energía en sus tres núcleos, tiene un costo de aproximadamente \$75 USD por lo cuál es bastante accesible en comparación a las soluciones mencionadas en la sección \ref{sec:costo}. Soporta una gran cantidad de protocolos seriales como I\textsuperscript{2}C, UART, HS UART, QSPI, USB2.0, entre otras. Tiene un núcleo específico para la comunicación por Zigbee y otro para WiFi. En la sección \ref{sec:doc_hw} se describirá más a detalle el hardware. Se eligieron tres plataformas de hardware para el desarrollo del proyecto, de las cuales el QCA4020 fue seleccionado como el SoC a utilizar. Las otras dos alternativas eran las siguientes:
 
-\paragraph{Software embebido}
-El software embebido será desarrollado en C, haciendo uso del SDK proporcionado por Qualcomm. Cabe mencionar que, a pesar de existir alternativas como micropython o rust, se eligió C por que permite un mayor control sobre del hardware, lo cuál es vital cuando se busca reducir el consumo de energía.
+\begin{itemize}
+\item El NRF52840-DK\cite{nordic_nRF52840} de la empresa Nordic. Esta plataforma cuenta con soporte para Zigbee y es más económica, pero carece de conectividad Ethernet (ya sea cableada o vía WiFi) por lo que añadírsela elevaría el costo a un valor similar al del QCA4020, aumentaría la complejidad del proyecto y aumentaría el consumo de energía de este.
+\item El XBee Zigbee Gateway\cite{digi_xbeeGW} de la empresa Digi. Esta plataforma ya es por si misma un Gateway con soporte de Zigbee y WiFi, pero su alto costo, consumo de energía y arquitectura de caja cerrada fueron las restricciones por las cuales fue descartada.
+\end{itemize}
 
-\paragraph{Software front-end}
+\item \textbf{Software embebido}
+El software embebido será desarrollado en C, haciendo uso del SDK proporcionado por Qualcomm. Cabe mencionar que, a pesar de existir alternativas como micropython o rust, se eligió C por que proporciona un mayor control sobre del hardware, lo cuál es vital cuando se busca reducir el consumo de energía.
+
+\item \textbf{Software front-end}
 Para el desarrollo del front-end se seleccionó Python por su conveniencia y diversidad de módulos, utilizando flask para el servidor y tkiner para la GUI. Para la base de datos se utilizará SQLite por su facilidad de ser integrada con flask.
+\end{itemize}
 
 \subsubsection{Documentación de la plataforma seleccionada} \label{sec:doc_hw}
 Se seleccionó el kit de desarrollo para el SoC QCA4020 ya que facilita a gran medida la implementación y depuración del software embebido ya que expone directamente la interfaz JTAG a USB. El SoC QCA4020 cuenta con diversas características que satisfacen todos los requerimientos del proyecto.
@@ -213,7 +251,7 @@ El SoC posee las siguientes interfaces
 \item SDIO2.0
 \item SPI/Q-SPI
 \item I\textsuperscript{2}C
-\item GPIO
+\item GPIO (44 pines)
 \item SPI
 \item UART
 \end{itemize}
@@ -221,28 +259,259 @@ El SoC posee las siguientes interfaces
 Además tiene 8 interfaces PWM optimizadas para iluminación LED y un ADC de 8 canales, con una resolución de 12 bits, y una tasa de muestreo de 1Msps.
 
 \subsection{Entrenamiento en la plataforma y SDK}
+Una vez que se eligió la plataforma de trabajo, se comenzó un entrenamiento de ella para familiarizarse con las diferentes herramientas que ofrece.
 % - Descripción breve del SDK (módulos, librerías, herramientas, etc)
-% - Entorno de desarrollo
+\subsubsection{SDK}
+El SDK del QCA4020 contiene una diversa cantidad de módulos que permiten configurarlo para un amplio rango de aplicaciones con diferentes necesidades. A continuación se listan algunas herramientas que se utilizarán para el desarrollo del Gateway propuesto.
+
+\paragraph{RTOS}
+El QCA4020 permite hacer uso de las APIs de QuRT, ThreadX o FreeRTOS para servicios de sistema operativo en tiempo real. La API recomendada es QuRT, ya que es desarrollada por Qualcomm por lo que se fácil de integrar al proyecto. Las RTOS APIs se encargan de lo siguiente:
+
+\begin{itemize}
+    \item Crear y destruir tareas o hilos.
+    \item Esperar a que un evento sea señalado y enviar señales de eventos.
+    \item Tomar posesión de mutex, así como liberarlos.
+    \item Incrementar y decrementar conteos de semáforos.
+    \item Iniciar temporizadores y esperar a que finalicen.
+\end{itemize}
+
+\paragraph{Prioridad de los hilos}
+Las aplicaciones pueden usar la API de QuRT para elegir la prioridad que se le dará a un hilo. El RTOS se encargará de darle tiempo en el CPU a cada hilo basándose en su prioridad.
+
+\paragraph{Framework para el low-power}
+QCA402x proporciona un framework altamente configurable para lograr el menor consumo de energía posible. El framework consta de los siguientes submódulos independientes:
+
+\subparagraph{Administración del consumo de energía de las CPUs}
+El QCA4020 consiste de tres CPUs, de las cuales dos permiten la administración de sus estados de energía de manera independiente:
+
+\begin{itemize}
+    \item Un ARM Cortex-M4F que funge como el procesador de la aplicación. Puede funcionar con frecuencias de reloj escalables de 32 MHz, 64 MHz y 128 MHz.
+    \item Un ARM Cortex-M0 que se encarga de ejecutar el firmware de los stacks de 802.15.4 (para Zigbee) y BLE. Esta CPU corre con una frecuencia de reloj fija de 64 MHz.
+\end{itemize}
+
+Los estados de energía de la CPU son administrados por el software del subsistema de "sleep" que se ejecuta cuando la CPU está inactiva. El subsistema de suspensión es independiente del caso de uso, es decir, entra y sale de estados de bajo consumo de una manera que es transparente para el software de la aplicación. En cada ciclo inactivo, el módulo de sleep analiza múltiples propiedades del sistema para elegir un estado de energía apropiado. Los siguientes parámetros tienen un papel en la elección de un estado de energía adecuado:
+
+\begin{itemize}
+    \item Duración del sleep - tiempo a transcurrir hasta el próximo evento de wake-up.
+    \item Latencia máxima de interrupción - Tiempo máximo de latencia que una interrupción no programada puede tolerar.
+\end{itemize}
+
+Los siguientes son los estados de consumo e energía soportados por las CPUs:
+
+\begin{itemize}
+    \item Activo - En este estado la CPU está ejecutando instrucciones. La memoria XiP y RAM está activa. % Execute in Place (XiP): The program code is executed directly from a flash memory.
+    \item Light sleep - En este estado, el consumo de energía de la CPU está controlada por reloj. Todo el contenido de la RAM se conserva.
+    \item Deep sleep - Este es el estado de energía más bajo de la CPU. La CPU se apaga y el contenido de la CPU no se conserva. El contenido de la RAM se conserva, pero los bancos de RAM entran en un estado de bajo consumo. El acceso a la memoria flash SPI-NOR (XiP) está desactivado. El subsistema de suspensión gestiona la restauración del estado de la CPU al despertar.
+\end{itemize}
+
+\subparagraph{Modo de funcionamiento}
+El QCA4020 define un conjunto de modos de funcionamiento para lograr un funcionamiento de bajo consumo basado en diferentes tipos de aplicaciones. Un modo de funcionamiento es un estado que define diferentes niveles de acceso a los recursos de memoria (RAM y XiP).
+
+\begin{itemize}
+    \item \textbf{Modo de funcionamiento completo}\\
+    El modo de funcionamiento completo (\textit{FOM}, por sus siglas en inglés) es el modo de operación por defecto. En este modo se tiene completo acceso a la memoria RAM y XiP (flash).
+    
+    \item \textbf{Modo de operación de sensores}\\
+    El modo de operación de sensores (\textit{SOM}) permite activaciones periódicas para realizar mediciones de sensores. El periodo de tiempo entre cada despertar es específico de la aplicación y se puede configurar antes de ingresar al modo de sensor. Mientras se ejecuta en SOM, solo se retienen los bancos de memoria asociados con la operación del modo de sensor. Los bancos de memoria FOM restantes se apagan. En este modo:
+    \begin{itemize}
+        \item Todos los bancos de memoria son apagados, con excepción de los que son requeridos por SOM.
+        \item El acceso a la memoria XiP se deshabilita.
+        \item Los servicios de red y la conectividad inalámbrica están deshabilitados.
+        \item Solo algunos periféricos están activos.
+        \item Este modo está designado para trabajar en modo no-RTOS.
+    \end{itemize}
+    
+    \item \textbf{Modo de funcionamiento mínimo}\\
+    Modo de funcionamiento mínimo (MOM). Este es el modo de menor consumo. En este modo, solo se activan 8 KB de RAM y se desactivan todos los demás recursos de memoria y periféricos.
+    
+\end{itemize}
+
+\paragraph{Driver de comunicación Zigbee}
+La biblioteca ZigBee proporciona la funcionalidad necesaria para admitir las funciones de ZigBee PRO y ZigBee 3.0.
 
 % \section{Caso de uso del sistema} ------- Pendiente para el siguiente reporte
-% Diagramas UML de casos de uso del usuario
+%   Diagramas UML de casos de uso del usuario
 
 \section{Evaluación del trabajo}
 El proyecto será evaluado con base a casos de uso que cubran todos los requerimientos de la sección \ref{sec:reqs}
 
 \section{Cronograma}
-% Incluir el trabajo planeado para las vacaciones
+\subsection{Plan de trabajo}
+En este reporte se ha definido ya el trabajo que ha sido realizado para el proyecto, se ha definido su objetivo, su alcance y sus requerimientos. Con esta información se puede realizar un plan de trabajo para las tareas restantes, agrupándolas por etapas y con objetivo de ser concluidas durante el semestre 2022-2023/I.
+
+\subsubsection{Definición del proyecto y finalización de materias}
+\begin{itemize}
+    \item \textbf{T1: Creación del tercer reporte de tesis}\\
+    Finalización de este reporte, el cuál contiene la información pertinente para comenzar con el desarrollo del proyecto.
+    \item \textbf{T2: Finalización de materias del posgrado}\\
+    Finalizar con todas las materias restantes del posgrado, con excepción del último seminario de tesis.
+\end{itemize}
+
+% 32 semanas a partir del 1 de julio
+\subsubsection{Desarrollo del software embebido}
+\begin{itemize}
+    \item \textbf{T3: Desarrollo de aplicación "Hola mundo" (1/Jul - 15/Jul)}\\ % 2s, 30/32
+    Desarrollar la primera aplicación del sistema, la cuál ya es proporcionada por parte de los tutoriales de Qualcomm. Su objetivo es únicamente el de ser la introducción al sistema, así como también validar que el ambiente de desarrollo fue configurado propiamente.
+    
+    \item \textbf{T4: Desarrollo de aplicación demo de WiFi con low-power (15/Jul - 5/Ago)}\\ % 3s, 27/32
+    Se desarrollará una aplicación WiFi simple que pueda mandar y recibir mensajes de HTTP de una API alojada en la red local. Esta aplicación deberá de utilizar las características de low-power de su respectivo núcleo.
+    
+    \item \textbf{T5: Desarrollo de aplicación demo de Zigbee con low-power (5/Ago - 26/Ago)}\\ % 3s, 24/32
+    De igual manera, se desarrollará una aplicación Zigbee que se comunique con un XStick y haga uso de las funcionalidades low-power de su núcleo. Esta aplicación no necesariamente cubrirá algún funcionamiento del Gateway, su propósito es el de la familiarización con el módulo de Zigbee.
+    
+    \item \textbf{T6:Desarrollo de aplicación demo de integración WiFi y Zigbee (26/Ago - 16/Sep)}\\ % 3s, 21/32
+    Una vez desarrolladas las aplicaciones de Zigbee y WiFi, se creará una tercera app que las integre, realizando así un funcionamiento similar al deseado para el Gateway.
+    
+    \item \textbf{T7: Desarrollo del software del Gateway (16/Sep - 14/Oct)}\\ % 4s, 17/32
+    Una vez que se conoce a más detalle el SDK y funcionamiento de la QCA4020 se puede comenzar con el desarrollo del Gateway.
+\end{itemize}
+
+\subsubsection{Desarrollo del sistema web y conexión con el Gateway}
+\begin{itemize}
+    \item \textbf{T8: Desarrollo de API con Flask (14/Oct - 21/Oct)}\\ % 1s, 16/32
+    Desarrollo de la API web encargada de recibir datos de la WSN.
+    
+    \item \textbf{T9: Implementación de la BD (21/Oct - 28/Oct)}\\ % 1s, 15/32
+    Implementación de la base de datos que almacenará resultados de la WSN.
+    
+    \item \textbf{T10: Conexión de BD con Back-End (28/Oct - 4/Nov)}\\ % 1s, 14/32
+    Realizar la conexión de la base de datos con el back-end de la aplicación web y realización de pruebas de integración.
+    
+    \item \textbf{T11: Desarrollo front-end de la app web (4/Nov - 11/Nov)}\\ % 1s, 13/32
+    Desarrollo de la interfaz de usuario de la app web.
+    
+    \item \textbf{T12: Conexión de GUI con Back-End (11/Nov - 18/Nov)}\\ % 1s, 12/32
+    Conexión del front-end con el back-end de la aplicación web.
+    
+    \item \textbf{T13: Conexión de sistema web con Gateway (18/Nov - 2/Dic)}\\ % 2s, 10/32
+    Conexión de la aplicación web con el Gateway, realización de pruebas de integración.
+\end{itemize}
+
+\subsubsection{Pruebas y validación}
+\begin{itemize}
+    \item \textbf{T14: Diseño e implementación de casos de prueba. Depuración del sistema (2/Dic - 30/Dic)}\\ % 4s, 6/32
+    Se diseñaran e implementaran diferentes casos de prueba que cubran los requerimientos del sistema. Se depurarán errores en la implementación del sistema.
+\end{itemize}
+
+\subsubsection{Redacción de tesis y presentación de exámenes}
+\begin{itemize}
+    \item \textbf{T15: Redacción de tesis (30/Dic - 20/Ene)}\\ % 3s, 3/32
+    Redacción de tesis, correcciones.
+    
+    \item \textbf{T16: Presentación de examen previo y profesional (20/Ene - 10/Feb)}\\ % 3s, 0/32
+    Preparación para exámenes previo y profesional. Presentación de exámenes.
+\end{itemize}
+
+\subsection{Diagramas de Gantt}
+\begin{figure}[h!]
+\begin{center}
+\begin{ganttchart}[y unit title=0.4cm,
+y unit chart=0.5cm,
+vgrid,hgrid, 
+title label anchor/.style={below=-1.6ex},
+title left shift=.05,
+title right shift=-.05,
+title height=1,
+progress label text={},
+bar height=0.7,
+group right shift=0,
+group top shift=.6,
+group height=.3]{1}{16}
+%labels
+\gantttitle{1/Jul/2022 - 21/Oct/2022}{16} \\
+\gantttitlelist{1,...,16}{1} \\
+%tasks
+\ganttbar{T3}{1}{2} \\
+\ganttbar{T4}{3}{5} \\
+\ganttbar{T5}{6}{8} \\
+\ganttbar{T6}{9}{11} \\
+\ganttbar{T7}{12}{15} \\
+\ganttbar{T8}{16}{16}
+
+%relations 
+\ganttlink{elem0}{elem1}
+\ganttlink{elem1}{elem2}
+\ganttlink{elem2}{elem3}
+\ganttlink{elem3}{elem4}
+\ganttlink{elem4}{elem5}
+\end{ganttchart}
+
+\caption{Diagrama de Gantt, primera mitad}
+\end{center}
+\end{figure}
+% ---------------------------------------------------------------------------
+\newpage
+\begin{figure}[h!]
+\begin{center}
+\begin{ganttchart}[y unit title=0.4cm,
+y unit chart=0.5cm,
+vgrid,hgrid, 
+title label anchor/.style={below=-1.6ex},
+title left shift=.05,
+title right shift=-.05,
+title height=1,
+progress label text={},
+bar height=0.7,
+group right shift=0,
+group top shift=.6,
+group height=.3]{1}{16}
+%labels
+\gantttitle{21/Oct/2022 - 10/Feb/2023}{16} \\
+\gantttitlelist{17,...,32}{1} \\
+%tasks
+\ganttbar{T9}{1}{1} \\ %1
+\ganttbar{T10}{2}{2} \\ %1
+\ganttbar{T11}{3}{3} \\ %1
+\ganttbar{T12}{4}{4} \\ %1
+\ganttbar{T13}{5}{6} \\ %2
+\ganttbar{T14}{7}{10} \\ %4
+\ganttbar{T15}{11}{13} \\ %3
+\ganttbar{T16}{14}{16} %3
+
+%relations 
+\ganttlink{elem0}{elem1}
+\ganttlink{elem1}{elem2}
+\ganttlink{elem2}{elem3}
+\ganttlink{elem3}{elem4}
+\ganttlink{elem4}{elem5}
+\ganttlink{elem5}{elem6}
+\ganttlink{elem6}{elem7}
+\end{ganttchart}
+
+\caption{Diagrama de Gantt, segunda mitad}
+\end{center}
+\end{figure}
+
+% Etapas y tareas:
+%   - Definición del proyecto y finalización de materias
+%       - Definir objetivos, alcance y requerimientos del proyecto
+%       - Creación del tercer reporte de tesis
+%       - Concluir materias del posgrado (salvo por el último seminario de tesis y la presentación de esta)
+%   - Desarrollo del software embebido
+%       - Desarrollo de aplicación "Hola mundo"
+%       - Desarrollo de aplicación demo de WiFi con low-power
+%       - Desarrollo de aplicación demo de Zigbee con low-power
+%       - Desarrollo de aplicación demo de integración WiFi y Zigbee
+%       - Desarrollo de FW del Gateway
+%   - Desarrollo del sistema front-end y conexión con el Gateway
+%       - Desarrollo de API con Flask
+%       - Implementación de la BD
+%       - Conexión de BD con Back-End
+%       - Desarrollo de GUI con TKInter
+%       - Conexión de GUI con Back-End
+%       - Conexión de sistema Front-End con Gateway
+%   - Pruebas y validación
+%       - Desarrollo e implementación de casos de prueba
+%   - Presentación del examen previo y profesional
 % Fecha de fin planeada para febrero 2023
 
-\section{Comentarios}
-% Escalabilidad, mantenibilidad y modularidad (de HW y de SW)
-% Usabilidad a través de una GUI en la app del back-end
+\section{Conclusiones}
+% Se definió el alcance de este proyecto...
+En este reporte se plantearon los objetivos, alcance y requerimientos del proyecto. Se realizó la selección de diferentes plataformas de desarrollo de hardware y componentes de software, de los cuáles se eligieron lo más apropiados para el desarrollo del Gateway y los sistemas de software que interactuarán con este. Se realizó también un plan de trabajo que abarca desde el primero de julio del año en curso al día diez de febrero del próximo año, y cuyas tareas cubren todo el desarrollo, pruebas y validación del proyecto, la redacción de la tesis de este, y la presentación de los exámenes de titulación.
 
+\newpage
 \section{Bibliografía}
-\printbibliography
-% 2 referencias de SoC
-% 4 Literatura
-% 1 Co-design
-% Trabajo previo: tesis de Arturo y artículo de Luis Octavio
+\printbibliography[heading=none]
+
 
 \end{document}
